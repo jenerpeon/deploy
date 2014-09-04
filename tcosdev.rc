@@ -1,3 +1,6 @@
+D_IMAGE="tcos-dev:1.1"
+
+
 function D() {
         docker run \
         --user="$USER" \
@@ -17,5 +20,5 @@ function D() {
         -e PS1=$PS1 \
         -e LS_COLORS=$LS_COLORS \
         --workdir $(pwd) \
-        tcos-dev:1.0 "$SHELL"
+        "$D_IMAGE" "$SHELL"
 }

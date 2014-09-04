@@ -7,6 +7,8 @@
 FROM joeyh/debian-stable-i386
 MAINTAINER Steffen Hoenig "s.hoenig@openthinclient.com"
 
+ENV DEBIAN_FRONTEND noninteractive
+
 # sources.list
 RUN :> /etc/apt/sources.list
 RUN echo "deb http://http.debian.net/debian wheezy main contrib non-free" >> /etc/apt/sources.list.d/base.list
@@ -14,13 +16,13 @@ RUN echo "\ndeb-src http://http.debian.net/debian wheezy main contrib" >> /etc/a
 RUN echo "deb http://http.debian.net/debian wheezy-backports main contrib non-free" >> /etc/apt/sources.list.d/backports.list
 RUN echo "deb http://packages.openthinclient.org/openthinclient/v2/devel ./" >> /etc/apt/sources.list.d/tcos.list
 RUN apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes dist-upgrade
+RUN apt-get -y --force-yes dist-upgrade
 
 # adjust apt settings
 RUN echo "APT::Install-Recommends \"0\";\nAPT::Install-Suggests \"0\";" > /etc/apt/apt.conf.d/01apt-get-install
 
 # INSTALL
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes libparse-debcontrol-perl vim emacs ca-certificates sudo locales devscripts build-essential git tcos-dev zsh fish x11-apps gnupg-agent
+RUN apt-get install -y --force-yes libparse-debcontrol-perl vim emacs ca-certificates sudo locales devscripts build-essential git tcos-dev zsh fish x11-apps openssh-client
 
 
 # SETUP

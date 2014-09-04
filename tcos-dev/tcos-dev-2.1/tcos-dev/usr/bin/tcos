@@ -14,7 +14,6 @@ VERSION=0.1
 REMOTE=root@172.21.44.2
 DIR=/var/www-vhosts/archive.openthinclient.org/openthinclient/customer
 SERVER=http://archive.openthinclient.org/openthinclient/customer
-HASH=$(/usr/bin/pwgen -s 8 1)
 ARCH=i386
 
 usage() {
@@ -48,15 +47,50 @@ EOF
 exit 65
 }
 
+
 usage_build() {
     cat <<EOF
-Usage: $(basename $0) build [--test]
+Usage: $(basename $0) build [--test] .
 
 arguments:
   --test	warning: this builds and uploads the package directly to the server
+  --base	enables the infamous "unknown-is-real-option" of fakeroot
 
 EOF
 exit 65
+}
+
+build() {
+    fakeroot=""
+    build_args=""
+
+    while [ "$#" -ge 1 ];do
+    	case $1 in
+	    --base)
+		shift
+		fakeroot="-rsudo"
+		;;
+	    --test)
+		shift
+		#todo
+		;;
+	    .)
+		shift
+		;;
+	    *)
+		shift
+		build_args="${build_args} ${key}"
+		;;
+	esac
+    done
+    dpkg-buildpackage ${fakeroot} -us -uc -a${ARCH} $build_args
+    # copy changelog
+    package_name=$(head -1 debian/changelog | awk '{print $1}')
+    if [ "$package_name" ]; then
+	cp debian/changelog ../"$package_name".changelog
+    fi
+
+    exit 0
 }
 
 usage_upload() {
@@ -72,22 +106,103 @@ EOF
 exit 65
 }
 
+update_metadata() {
+    remote=$1
+    path=$2
+    prefix=$3
+
+    #private or public repo? look for --hash
+    if [ "$hash"];then
+	ssh_path="$path/${prefix}_$hash"
+	echo -e "Insert the following line to your sources.list:\ndeb ${remote}/${prefix}_${HASH} ./\n"
+    else
+	ssh_path="$path"
+    ssh $remote "cd $ssh_path; apt-ftparchive packages . > Packages; gzip -9cf < Packages > Packages.gz ; \
+			       bzip2 -9cf < Packages > Packages.bz2; \
+			       apt-ftparchive sources . > Sources; gzip -9cf < Sources > Sources.gz; \
+			       bzip2 -9cf < Sources > Sources.bz2; \
+			       apt-ftparchive release . > Release \
+	        "
+    fi
+}
+
+upload_file() {
+    remote=$1
+    path=$2
+    file=$3
+    prefix=$4
+
+    #private or public repo? look for --hash
+    if [ "$hash" ];then
+	# stream the file over a pipe to ssh
+	cat $file | ssh $remote "mkdir -p $path/${prefix}_$hash; cat >> $path/${prefix}_$hash/`basename $file`"
+    else
+	cat $file | ssh $remote "cat >> $path/$(basename $file)"
+    fi
+}
+
+upload() {
+   set -x
+   upload_args=""
+   while [ "$#" -ge 1 ];do
+      case $1 in
+	  --server)
+	      shift
+	      #todo: source config file -> dir, remote
+	      dir="$DIR"
+	      remote="$REMOTE"
+	      ;;
+	  --hash)
+	      shift
+	      hash="$1"
+	      ;;
+	  *)
+	      upload_args="${upload_args} ${1}"
+	      shift
+	      ;;
+      esac
+  done
+  debs=${upload_args}
+  for d in $debs;do
+      if echo $d | /bin/grep -qs "\.deb$";then
+	  bn=$(basename $d)
+	  dn=$(dirname $d)
+	  base=${bn%%_*b}
+	  changelog=${dn}/${base}.changelog
+	  version=$(grep -m 1 -i $base $changelog | awk '{print $2}' | tr -d '()')
+	  changes=${dn}/${base}_${version}_${ARCH}.changes
+	  dsc=${dn}/${base}_${version}.dsc
+	  tgz=${dn}/${base}_${version}.tar.gz
+	  echo -e "Uploading:\n"
+	  for f in $d $dsc $changes $changelog $tgz;do
+	      echo -e "--> $f\n"
+	      upload_file $remote $dir $f $base
+	  done
+	  echo -e "Generating: Packages.gz\n"
+	  update_metadata $remote $dir $base
+      fi
+  done
+  set +x
+}
+
 # build or upload? (or config?)
 
 key="$1"
 
 case $key in
     build)
-	build=true
-	usage_build
+	shift
+	[ -z "$1" ] && usage_build
+	build "$@"
 	;;
     config)
-	config=true
-	usage_config
+	shift
+	[ -z "$1" ] && usage_config
 	;;
     upload)
-	upload=true
-	usage_upload
+	shift
+	[ -z "$1" ] && usage_upload
+	upload "$@"
 	;;
     -v|--version|version)
 	echo -e "$(basename $0) utility. version: $VERSION"
@@ -97,60 +212,3 @@ case $key in
 	usage
 	;;
 esac
-
-
-upload_file() {
-    remote=$1
-    path=$2
-    file=$3
-    prefix=$4
-
-    # stream the file over a pipe to ssh
-    cat $file | ssh $remote "mkdir -p $path/${prefix}_$HASH; cat >> $path/${prefix}_$HASH/`basename $file`"
-}
-
-update_metadata() {
-    remote=$1
-    path=$2
-
-    #
-    ssh $remote "cd $path/${prefix}_$HASH; apt-ftparchive packages . > Packages; gzip -9cf < Packages > Packages.gz ; bzip2 -9cf < Packages > Packages.bz2; \
-	    		         apt-ftparchive sources . > Sources; gzip -9cf < Sources > Sources.gz; bzip2 -9cf < Sources > Sources.bz2; \
-			         apt-ftparchive release . > Release \
-	        "
-}
-# Check arguments
-if [ $# -ge 1 ]; then
-        DEBS="$@"
-	[ -n "$2" ] && HASH="$2"
-else
-        usage
-        exit
-fi
-
-# Uploading packages
-
-for d in $DEBS
-do
-   if echo $d | /bin/grep -qs "\.deb$"
-   then
-       bn=$(basename $d)
-       dn=$(dirname $d)
-       base=${bn%%_*b}
-       changelog=${dn}/${base}.changelog
-       version=$(grep -m 1 -i $base $changelog | awk '{print $2}' | tr -d '()')
-       changes=${dn}/${base}_${version}_${ARCH}.changes
-       dsc=${dn}/${base}_${version}.dsc
-       tgz=${dn}/${base}_${version}.tar.gz
-       echo -e "Uploading:\n"
-       for f in $d $dsc $changes $changelog $tgz
-       do
-	   echo -e "--> $f\n"
-           upload_file $REMOTE $DIR $f $base
-       done
-       echo -e "Generating: Packages.gz\n"
-       update_metadata $REMOTE $DIR
-
-       echo -e "Insert the following line to your sources.list:\ndeb ${SERVER}/${prefix}_${HASH} ./\n"
-    fi
-done

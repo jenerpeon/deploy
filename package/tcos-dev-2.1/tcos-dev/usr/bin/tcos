@@ -84,6 +84,11 @@ function build() {
     exit 0
 }
 
+function clean(){
+    #todo:all
+    :
+}
+
 function update_metadata() {
     remote=$1
     path=$2
@@ -120,13 +125,17 @@ function upload_file() {
 }
 
 function upload() {
-   set -x
    upload_args=""
+
+   #get default values
+   section=$(default_section $INI_FILE)
+   eval $(read_section $INI_FILE $section)
+
    while [ "$#" -ge 1 ];do
       case $1 in
 	  --server)
 	      shift
-	      #parses config file -> dir, remote
+	      #override default values
 	      eval $(read_section $INI_FILE $1)
 	      ;;
 	  --hash)
@@ -153,13 +162,12 @@ function upload() {
 	  echo -e "Uploading:\n"
 	  for f in $d $dsc $changes $changelog $tgz;do
 	      echo -e "--> $f\n"
-	      upload_file $remote $dir $f $base
+	      upload_file "$remote" "$dir" "$f" "$base"
 	  done
 	  echo -e "Generating: Packages.gz\n"
-	  update_metadata $remote $dir $base
+	  update_metadata "$remote" "$dir" "$base"
       fi
   done
-  set +x
 }
 
 # build or upload? (or config?)

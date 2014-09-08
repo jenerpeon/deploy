@@ -1,8 +1,15 @@
-tcos-dev (2.1-2) UNRELEASED; urgency=low
+tcos-dev (2.1-3) UNRELEASED; urgency=medium
 
-  * added tcos_testpackage 
+  * new tcos build tool: "tcos", wraps the current scripts into one
+    self-documenting tool 
 
- -- Steffen Hoenig <tcos@9227bccd1c5e>  Thu, 03 Jul 2014 10:56:17 +0000
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Mon, 08 Sep 2014 12:34:35 +0200
+
+tcos-dev (2.1-2) unstable; urgency=low
+
+  * added tcos_testpackage
+
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Mon, 08 Sep 2014 12:34:32 +0200
 
 tcos-dev (2.1-1) unstable; urgency=low
 

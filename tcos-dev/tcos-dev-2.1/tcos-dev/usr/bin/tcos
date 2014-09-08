@@ -10,57 +10,48 @@
 #
 #
 
-VERSION=0.1
-REMOTE=root@172.21.44.2
-DIR=/var/www-vhosts/archive.openthinclient.org/openthinclient/customer
-SERVER=http://archive.openthinclient.org/openthinclient/customer
+# includes
+
+#. /usr/share/tcos-dev/functions/ini_parser
+#. /usr/share/tcos-dev/functions/usage
+
+. ~/.local/share/tcos-dev/functions/ini_parser
+. ~/.local/share/tcos-dev/functions/usage
+
+VERSION=2.1
 ARCH=i386
 
-usage() {
-	cat <<EOF
-Usage:	$(basename $0) <command> [--version] [--test] [--hash] [<args>]
 
-available commands:
-  build		creates tcos packages
-  config	allows to view and set the remote server settings
-  upload	uploads a deb file to a repository
+# config file: ~/.tcosconfig > /etc/tcos-dev/tcosconfig
 
-EOF
+[ -f ~/.tcosconfig ] && INI_FILE="$HOME/.tcosconfig" || INI_FILE="/etc/tcos-dev/tcosconfig"
+
+function config() {
+
+    while [ "$#" -ge 1 ];do
+	case $1 in
+	    get)
+		shift
+		[ "$1" = "--server" ] && section="$2" || section=$(default_section $INI_FILE)
+		eval $(read_section $INI_FILE $section)
+		echo -e "server:\t$section\ndir:\t$dir\nremote:\t$remote"
+		exit 0
+		;;
+	    set)
+		shift
+		#todo:
+		exit 0
+		;;
+	    *)
+		shift
+		#todo
+		;;
+	esac
+    done
 exit 65
 }
 
-usage_config() {
-    	cat <<EOF
-Usage: $(basename $0) config [get] [set] [<args>]
-
-available commands:
-  get 		reads the value of the configuration variable
-  set		writes the value of the configuration variable
-
-example:
-$ tcos config set remote="root@httpd"
-$ tcos config get dir
-
- dir="/var/www-vhosts/archive.openthinclient.org/openthinclient/customer"
-
-EOF
-exit 65
-}
-
-
-usage_build() {
-    cat <<EOF
-Usage: $(basename $0) build [--test] .
-
-arguments:
-  --test	warning: this builds and uploads the package directly to the server
-  --base	enables the infamous "unknown-is-real-option" of fakeroot
-
-EOF
-exit 65
-}
-
-build() {
+function build() {
     fakeroot=""
     build_args=""
 
@@ -93,20 +84,7 @@ build() {
     exit 0
 }
 
-usage_upload() {
-    cat <<EOF
-Usage: $(basename $0) upload [--server] [--hash] [<args>]
-
-arguments:
-  --server	chooses a server from the .tcosconfig file
-  --hash	adds a hash to the directory
-  <args>	path to the deb-file
-
-EOF
-exit 65
-}
-
-update_metadata() {
+function update_metadata() {
     remote=$1
     path=$2
     prefix=$3
@@ -126,7 +104,7 @@ update_metadata() {
     fi
 }
 
-upload_file() {
+function upload_file() {
     remote=$1
     path=$2
     file=$3
@@ -141,16 +119,15 @@ upload_file() {
     fi
 }
 
-upload() {
+function upload() {
    set -x
    upload_args=""
    while [ "$#" -ge 1 ];do
       case $1 in
 	  --server)
 	      shift
-	      #todo: source config file -> dir, remote
-	      dir="$DIR"
-	      remote="$REMOTE"
+	      #parses config file -> dir, remote
+	      eval $(read_section $INI_FILE $1)
 	      ;;
 	  --hash)
 	      shift
@@ -198,6 +175,7 @@ case $key in
     config)
 	shift
 	[ -z "$1" ] && usage_config
+	config "$@"
 	;;
     upload)
 	shift
@@ -205,7 +183,7 @@ case $key in
 	upload "$@"
 	;;
     -v|--version|version)
-	echo -e "$(basename $0) utility. version: $VERSION"
+	echo -e "$(basename $0):\tv$VERSION"
 	exit 65
 	;;
     *)

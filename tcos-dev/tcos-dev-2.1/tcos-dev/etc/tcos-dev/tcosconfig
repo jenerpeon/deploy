@@ -1,0 +1,10 @@
+[Server1]
+dir="aeuiae"
+remote="steffen@server -p 10222"
+
+
+
+[otc-dd-dev2]
+dir="/var/www/openthinclient"
+remote="steffen@server -p 10222"
+

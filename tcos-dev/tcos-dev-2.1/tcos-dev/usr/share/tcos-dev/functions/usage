@@ -1,0 +1,58 @@
+function usage() {
+	cat <<EOF
+Usage:	$(basename $0) <command> [--version] [--test] [--hash] [<args>]
+
+available commands:
+  build		creates tcos packages
+  config	allows to view and set the remote server settings
+  upload	uploads a deb file to a repository
+
+EOF
+exit 65
+}
+
+function usage_config() {
+    	cat <<EOF
+Usage: $(basename $0) config [get] [set] [<args>]
+
+available commands:
+  get 		reads the value of the configuration variable
+  set		! writes the value of the configuration variable (not implemented yet) !
+
+arguments:
+  --server	reads the values for another server definition 
+
+example:
+$ tcos config set remote="root@httpd"
+$ tcos config get dir
+
+ dir="/var/www-vhosts/archive.openthinclient.org/openthinclient/customer"
+
+EOF
+exit 65
+}
+
+function usage_build() {
+    cat <<EOF
+Usage: $(basename $0) build [--test] .
+
+arguments:
+  --test	warning: this builds and uploads the package directly to the server
+  --base	enables the infamous "unknown-is-real-option" of fakeroot
+
+EOF
+exit 65
+}
+
+function usage_upload() {
+    cat <<EOF
+Usage: $(basename $0) upload [--server] [--hash] [<args>]
+
+arguments:
+  --server	chooses a server from the .tcosconfig file
+  --hash	adds a hash to the directory
+  <args>	path to the deb-file
+
+EOF
+exit 65
+}

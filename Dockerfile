@@ -22,7 +22,7 @@ RUN apt-get -y --force-yes dist-upgrade
 RUN echo "APT::Install-Recommends \"0\";\nAPT::Install-Suggests \"0\";" > /etc/apt/apt.conf.d/01apt-get-install
 
 # INSTALL
-RUN apt-get install -y --force-yes libparse-debcontrol-perl vim-nox emacs24-nox ca-certificates sudo locales devscripts build-essential git tcos-dev zsh fish openssh-client
+RUN apt-get install -y --force-yes libparse-debcontrol-perl vim-nox emacs23-nox ca-certificates sudo locales devscripts build-essential git tcos-dev zsh fish openssh-client
 
 
 # SETUP

@@ -37,8 +37,8 @@ function D() {
         -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
         -e DISPLAY=unix:0 \
         -v /etc/passwd:/etc/passwd \
-	-v /etc/group:/etc/group \
-	-v /etc/sudoers:/etc/sudoers \
+        -v /etc/group:/etc/group \
+        -v /etc/sudoers:/etc/sudoers \
         -v $SSH_AUTH_SOCK:$SSH_AUTH_SOCK \
         -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK \
         -e PS1=$PS1 \

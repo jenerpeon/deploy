@@ -14,8 +14,11 @@ installation
 
 - clone the git repo to "$some_place"
 - cd "$some_place"
-- docker build -t tcos-dev:1.0 .
 
+```
+docker build -t tcos-dev:latest .
+
+```
 
 add the following snippet to your shell profile (e.g. .bashrc or .zshrc)
 

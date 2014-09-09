@@ -2,7 +2,7 @@
 #
 # based on https://github.com/steffenhoenig/docker-openthinclient-dev
 #
-# VERSION       1.0
+# VERSION	development
 
 FROM joeyh/debian-stable-i386
 MAINTAINER Steffen Hoenig "s.hoenig@openthinclient.com"
@@ -22,7 +22,7 @@ RUN apt-get -y --force-yes dist-upgrade
 RUN echo "APT::Install-Recommends \"0\";\nAPT::Install-Suggests \"0\";" > /etc/apt/apt.conf.d/01apt-get-install
 
 # INSTALL
-RUN apt-get install -y --force-yes libparse-debcontrol-perl vim emacs ca-certificates sudo locales devscripts build-essential git tcos-dev zsh fish x11-apps openssh-client
+RUN apt-get install -y --force-yes libparse-debcontrol-perl vim-nox emacs-nox ca-certificates sudo locales devscripts build-essential git tcos-dev zsh fish openssh-client
 
 
 # SETUP

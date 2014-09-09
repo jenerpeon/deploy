@@ -89,7 +89,7 @@ function build() {
     if [ "$package_name" ]; then
 	cp debian/changelog ../"$package_name".changelog
     fi
-    if "$test";then
+    if [ "$test" ];then
 	section=$DEFAULT_SECTION
 	eval $(read_section $INI_FILE $section)
 	rsync -vaP schema/ ${remote}:/opt/openthinclient/server/default/data/nfs/root/schema/

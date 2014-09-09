@@ -25,6 +25,8 @@ source tcosdev.rc
 
 
 ```
+D_IMAGE=tcos-dev:latest
+
 function D() {
         docker run \
         --user="$USER" \
@@ -37,14 +39,12 @@ function D() {
         -v /etc/passwd:/etc/passwd \
 	-v /etc/group:/etc/group \
 	-v /etc/sudoers:/etc/sudoers \
-        -v /var/www/openthinclient:/var/www/openthinclient \
-        -v /var/www/openthinclient-upstream:/var/www/openthinclient-upstream \
         -v $SSH_AUTH_SOCK:$SSH_AUTH_SOCK \
         -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK \
         -e PS1=$PS1 \
         -e LS_COLORS=$LS_COLORS \
         --workdir $(pwd) \
-        tcos-dev:1.0 "$SHELL"
+        "$D_IMAGE "$SHELL"
 }
 ```
 

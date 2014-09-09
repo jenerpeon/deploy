@@ -1,10 +1,19 @@
-[Server1]
-dir="aeuiae"
-remote="steffen@server -p 10222"
+[local]
+dir="/var/www/openthinclient/manager-rolling"
+remote="root@localhost"
 
+[devel]
+dir="/var/www-vhosts/archive.openthinclient.org/openthinclient/v2/devel"
+remote="root@172.21.44.2"
 
+[rolling]
+dir="/var/www-vhosts/archive.openthinclient.org/openthinclient/v2/manager-rolling"
+remote="root@172.21.44.2"
 
-[otc-dd-dev2]
-dir="/var/www/openthinclient"
-remote="steffen@server -p 10222"
+[testing]
+dir="/var/www-vhosts/archive.openthinclient.org/openthinclient/v2/manager-testing"
+remote="root@172.21.44.2"
 
+[customer]
+dir="/var/www-vhosts/archive.openthinclient.org/openthinclient/customer"
+remote="root@172.21.44.2"

@@ -10,21 +10,27 @@
 #
 #
 
-# includes
 
-#. /usr/share/tcos-dev/functions/ini_parser
-#. /usr/share/tcos-dev/functions/usage
 
-. ~/.local/share/tcos-dev/functions/ini_parser
-. ~/.local/share/tcos-dev/functions/usage
-
-VERSION=2.1
+VERSION=$(dpkg -l | grep -i tcos-dev | awk '{ print $3 }');VERSION=${VERSION:-"latest"}
 ARCH=i386
 
+# includes
+
+[ "$DEV" = "true" ] && PREFIX="$HOME/.local/share" || PREFIX="/usr/share"
+
+. "$PREFIX"/tcos-dev/functions/ini_parser
+. "$PREFIX"/tcos-dev/functions/usage
 
 # config file: ~/.tcosconfig > /etc/tcos-dev/tcosconfig
 
 [ -f ~/.tcosconfig ] && INI_FILE="$HOME/.tcosconfig" || INI_FILE="/etc/tcos-dev/tcosconfig"
+
+DEFAULT_SECTION=$(default_section $INI_FILE)
+
+
+################################################################################
+
 
 function config() {
 
@@ -32,7 +38,7 @@ function config() {
 	case $1 in
 	    get)
 		shift
-		[ "$1" = "--server" ] && section="$2" || section=$(default_section $INI_FILE)
+		[ "$1" = "--server" ] && section="$2" || section=$DEFAULT_SECTION
 		eval $(read_section $INI_FILE $section)
 		echo -e "server:\t$section\ndir:\t$dir\nremote:\t$remote"
 		exit 0
@@ -52,18 +58,21 @@ exit 65
 }
 
 function build() {
-    fakeroot=""
+    fakeroot="-rfakeroot"
     build_args=""
 
     while [ "$#" -ge 1 ];do
     	case $1 in
 	    --base)
 		shift
-		fakeroot="-rsudo"
+		fakeroot="-rfakeroot -u"
 		;;
 	    --test)
 		shift
 		#todo
+		test="true"
+		package_name=$(package_name=`head -1 debian/changelog | awk '{print $1}'`)
+		shift
 		;;
 	    .)
 		shift
@@ -74,19 +83,34 @@ function build() {
 		;;
 	esac
     done
-    dpkg-buildpackage ${fakeroot} -us -uc -a${ARCH} $build_args
+    dpkg-buildpackage "${fakeroot}" -us -uc -a${ARCH} $build_args
     # copy changelog
     package_name=$(head -1 debian/changelog | awk '{print $1}')
     if [ "$package_name" ]; then
 	cp debian/changelog ../"$package_name".changelog
     fi
+    if "$test";then
+	section=$DEFAULT_SECTION
+	eval $(read_section $INI_FILE $section)
+	rsync -vaP schema/ ${remote}:/opt/openthinclient/server/default/data/nfs/root/schema/
+	rsync -vaP debian/${package_name}/sfs/package/${package_name}.sfs ${remote}:/opt/openthinclient/server/default/data/nfs/root/schema/application/
+    fi
+
 
     exit 0
 }
 
 function clean(){
     #todo:all
-    :
+    #get packagename
+    current_dir=$(pwd)
+    package_full=$(basename "$current_dir")
+    package=${package_full%-*}
+
+    [ -d ./debian/tempcopy ] && [ -d ./debian/"$package" ] || exit 1 
+    set -x
+    rm -rf debian/tempcopy
+    rm -rf debian/"$package"
 }
 
 function update_metadata() {
@@ -128,7 +152,7 @@ function upload() {
    upload_args=""
 
    #get default values
-   section=$(default_section $INI_FILE)
+   section=$DEFAULT_SECTION
    eval $(read_section $INI_FILE $section)
 
    while [ "$#" -ge 1 ];do
@@ -137,6 +161,7 @@ function upload() {
 	      shift
 	      #override default values
 	      eval $(read_section $INI_FILE $1)
+	      shift
 	      ;;
 	  --hash)
 	      shift
@@ -180,6 +205,10 @@ case $key in
 	[ -z "$1" ] && usage_build
 	build "$@"
 	;;
+    clean)
+	shift
+	clean
+	;;
     config)
 	shift
 	[ -z "$1" ] && usage_config
@@ -191,7 +220,7 @@ case $key in
 	upload "$@"
 	;;
     -v|--version|version)
-	echo -e "$(basename $0):\tv$VERSION"
+	echo -e "$(basename $0):\t$VERSION"
 	exit 65
 	;;
     *)

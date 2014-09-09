@@ -4,13 +4,20 @@ Usage:	$(basename $0) <command> [--version] [--test] [--hash] [<args>]
 
 available commands:
   build		creates tcos packages
+  clean		removes temporary build files in debian/*
   config	allows to view and set the remote server settings
   upload	uploads a deb file to a repository
 
 EOF
 exit 65
 }
+function usage_clean() {
+	cat <<EOF
+Usage: $basename $0) clean
 
+EOF
+exit 65
+}
 function usage_config() {
     	cat <<EOF
 Usage: $(basename $0) config [get] [set] [<args>]

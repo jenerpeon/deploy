@@ -1,9 +1,11 @@
-tcos-dev (2.1-3) UNRELEASED; urgency=medium
+tcos-dev (2.1-4) UNRELEASED; urgency=medium
 
   * new tcos build tool: "tcos", wraps the current scripts into one
-    self-documenting tool 
+    self-documenting tool
+  * added clean option to remove build-generated files
+  * added --test option, replaces tcos_testpackage
 
- -- Steffen Hoenig <s.hoenig@openthinclient.com>  Mon, 08 Sep 2014 12:34:35 +0200
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Tue, 09 Sep 2014 15:52:21 +0200
 
 tcos-dev (2.1-2) unstable; urgency=low
 

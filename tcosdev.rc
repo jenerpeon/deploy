@@ -1,6 +1,5 @@
 D_IMAGE="steffenhoenig/tcos-dev:latest"
 
-
 function D() {
         docker run \
         --user="$USER" \

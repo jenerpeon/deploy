@@ -99,7 +99,7 @@ function build() {
     fi
     if [ "$test" ];then
 	rsync -vaP schema/ ${remote}:/opt/openthinclient/server/default/data/nfs/root/schema/
-	rsync -vaP debian/${package_name}/sfs/package/${package_name}.sfs ${remote}:/opt/openthinclient/server/default/data/nfs/root/schema/application/
+	rsync -vaP debian/${package_name}/sfs/package/${package_name}.sfs ${remote}:/opt/openthinclient/server/default/data/nfs/root/sfs/package
     fi
 
 

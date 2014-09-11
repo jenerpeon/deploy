@@ -13,7 +13,7 @@
 
 
 VERSION=$(dpkg -l | grep -i tcos-dev | awk '{ print $3 }');VERSION=${VERSION:-"latest"}
-ARCH=i386
+ARCH=${ARCH:-i386}
 
 # includes
 
@@ -184,13 +184,12 @@ function upload() {
       esac
   done
   debs=${upload_args}
-  set -x
   for d in $debs;do
       if echo $d | /bin/grep -qs "\.deb$";then
 	  bn=$(basename $d)
 	  dn=$(dirname $d)
 	  base=${bn%%_*b}
-	  changelog=${dn}/${base}.changelog
+	  changelog=debian/changelog
 	  version=$(grep -m 1 -i $base $changelog | awk '{print $2}' | tr -d '()')
 	  changes=${dn}/${base}_${version}_${ARCH}.changes
 	  dsc=${dn}/${base}_${version}.dsc
@@ -204,7 +203,6 @@ function upload() {
 	  update_metadata "$remote" "$dir" "$base"
       fi
   done
-  set +x
 }
 
 # build or upload? (or config?)

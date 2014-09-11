@@ -10,6 +10,7 @@ function D() {
         -v $HOME:$HOME \
         -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
         -e DISPLAY=unix:0 \
+	-v /etc/localtime:/etc/localtime \
         -v /etc/passwd:/etc/passwd \
 	-v /etc/group:/etc/group \
 	-v /etc/sudoers:/etc/sudoers \

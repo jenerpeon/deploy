@@ -19,6 +19,8 @@ function D() {
         -e PS1=$PS1 \
         -e LS_COLORS=$LS_COLORS \
         -e USER=$USER \
+        -e LANG=$LANG \
+        -e PATH=$PATH \
         --workdir $(pwd) \
         "$D_IMAGE" "$SHELL"
 }

@@ -1,4 +1,4 @@
-D_IMAGE="tcos-dev:latest"
+D_IMAGE="steffenhoenig/tcos-dev:latest"
 
 
 function D() {
@@ -17,6 +17,7 @@ function D() {
         -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK \
         -e PS1=$PS1 \
         -e LS_COLORS=$LS_COLORS \
+        -e USER="$USER" \
         --workdir $(pwd) \
         "$D_IMAGE" "$SHELL"
 }

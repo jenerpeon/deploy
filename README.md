@@ -12,12 +12,19 @@ requirements
 installation
 ============
 
-- clone the git repo to "$some_place"
-- cd "$some_place"
+manual way:
+
+1. clone the git repo to "$some_place"
+2. cd "$some_place"
 
 ```
 docker build -t tcos-dev:latest .
+```
+-or-
 
+from docker hub:
+```
+docker pull steffenhoenig/tcos-dev
 ```
 
 add the following snippet to your shell profile (e.g. .bashrc or .zshrc)

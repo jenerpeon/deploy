@@ -21,5 +21,6 @@ function D() {
         -e LANG=$LANG \
         -e PATH=$PATH \
         --workdir $(pwd) \
+	"$@" \
         "$IMAGE" "$SHELL"
 }

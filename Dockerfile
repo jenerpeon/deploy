@@ -24,8 +24,6 @@ RUN echo "APT::Install-Recommends \"0\";\nAPT::Install-Suggests \"0\";" > /etc/a
 # INSTALL
 RUN apt-get install -y --force-yes less libparse-debcontrol-perl vim-nox emacs23-nox ca-certificates sudo locales devscripts build-essential git tcos-dev zsh rsync openssh-client
 
-
-
 # SETUP
 RUN echo "en_US.UTF-8 UTF-8\nde_DE.UTF-8 UTF-8" >> /etc/locale.gen
 RUN locale-gen

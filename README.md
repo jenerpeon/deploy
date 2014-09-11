@@ -28,7 +28,7 @@ source tcosdev.rc
 
 
 ```
-D_IMAGE=tcos-dev:latest
+D_IMAGE=steffenhoenig/tcos-dev:latest
 
 function D() {
         docker run \

@@ -60,12 +60,20 @@ exit 65
 function build() {
     fakeroot="-rfakeroot"
     build_args=""
+    section=$DEFAULT_SECTION
+    eval $(read_section $INI_FILE $section)
 
     while [ "$#" -ge 1 ];do
     	case $1 in
 	    --base)
 		shift
 		fakeroot="-rfakeroot -u"
+		;;
+	    --server)
+		shift
+		#override default values
+		eval $(read_section $INI_FILE $1)
+		shift
 		;;
 	    --test)
 		shift
@@ -90,8 +98,6 @@ function build() {
 	cp debian/changelog ../"$package_name".changelog
     fi
     if [ "$test" ];then
-	section=$DEFAULT_SECTION
-	eval $(read_section $INI_FILE $section)
 	rsync -vaP schema/ ${remote}:/opt/openthinclient/server/default/data/nfs/root/schema/
 	rsync -vaP debian/${package_name}/sfs/package/${package_name}.sfs ${remote}:/opt/openthinclient/server/default/data/nfs/root/schema/application/
     fi
@@ -137,14 +143,18 @@ function upload_file() {
     remote=$1
     path=$2
     file=$3
+    file_base=$(basename $file)
     prefix=$4
 
     #private or public repo? look for --hash
     if [ "$hash" ];then
 	# stream the file over a pipe to ssh
-	cat $file | ssh $remote "mkdir -p $path/${prefix}_$hash; cat >> $path/${prefix}_$hash/`basename $file`"
+	cat $file | ssh $remote "mkdir -p $path/${prefix}_$hash;\
+	    			 [ -f $path/${prefix}_$hash/$file_base] && rm -rf $path/${prefix}_$hash/$file_base;\
+	    			 cat >> $path/${prefix}_$hash/$file_base"
     else
-	cat $file | ssh $remote "cat >> $path/$(basename $file)"
+	cat $file | ssh $remote "[ -f $path/$file_base ] && rm -rf $path/$file_base;\
+	                         cat >> $path/$(basename $file)"
     fi
 }
 
@@ -174,6 +184,7 @@ function upload() {
       esac
   done
   debs=${upload_args}
+  set -x
   for d in $debs;do
       if echo $d | /bin/grep -qs "\.deb$";then
 	  bn=$(basename $d)
@@ -193,6 +204,7 @@ function upload() {
 	  update_metadata "$remote" "$dir" "$base"
       fi
   done
+  set +x
 }
 
 # build or upload? (or config?)

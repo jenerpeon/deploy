@@ -1,4 +1,8 @@
 *~
+*.deb
+*.build
+*.changes
+*.dsc
 *.swp
 */debian/tcos-dev/*
 *-stamp

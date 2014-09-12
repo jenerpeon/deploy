@@ -27,7 +27,11 @@ RUN apt-get install -y --force-yes less libparse-debcontrol-perl vim-nox emacs23
 # SETUP
 RUN echo "en_US.UTF-8 UTF-8\nde_DE.UTF-8 UTF-8" >> /etc/locale.gen
 RUN locale-gen
+
+# SSHD
 RUN ssh-keygen -A
+RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
 
 EXPOSE 22
 

@@ -27,35 +27,17 @@ from docker hub:
 docker pull steffenhoenig/tcos-dev
 ```
 
-add the following snippet to your shell profile (e.g. .bashrc or .zshrc)
+source tcosdev.rc
+
+```
+D [optional docker options]
+```
 
 -or-
 
-source tcosdev.rc
-
-
 ```
-D_IMAGE=steffenhoenig/tcos-dev:latest
+Z [optional docker options]
 
-function D() {
-        docker run \
-        --user="$USER" \
-        --rm \
-        -it \
-        --hostname="$(hostname)[D]" \
-        -v $HOME:$HOME \
-        -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
-        -e DISPLAY=unix:0 \
-        -v /etc/passwd:/etc/passwd \
-        -v /etc/group:/etc/group \
-        -v /etc/sudoers:/etc/sudoers \
-        -v $SSH_AUTH_SOCK:$SSH_AUTH_SOCK \
-        -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK \
-        -e PS1=$PS1 \
-        -e LS_COLORS=$LS_COLORS \
-        --workdir $(pwd) \
-        "$D_IMAGE "$SHELL"
-}
-```
 
-From now on hit "D" and <Enter> in your shell environment and swith instantaneously to your docker set-up"
+D = interactive development profile
+Z = starts sshd and is meant for services

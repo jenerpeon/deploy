@@ -1,26 +1,41 @@
 IMAGE=${IMAGE:-steffenhoenig/tcos-dev:latest}
 
-function D() {
+function docker_base() {
         docker run \
-        --user="$USER" \
         --rm \
-        -it \
-        --hostname="$(hostname)[D]" \
-        -v $HOME:$HOME \
-        -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
-        -e DISPLAY=unix:0 \
 	-v /etc/localtime:/etc/localtime \
         -v /etc/passwd:/etc/passwd \
+        -v /etc/shadow:/etc/shadow \
 	-v /etc/group:/etc/group \
 	-v /etc/sudoers:/etc/sudoers \
+        -v $HOME:$HOME \
         -v $SSH_AUTH_SOCK:$SSH_AUTH_SOCK \
         -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK \
         -e PS1=$PS1 \
         -e LS_COLORS=$LS_COLORS \
-        -e USER=$USER \
         -e LANG=$LANG \
         -e PATH=$PATH \
+	"$@"
+}
+
+function D() {
+        docker_base \
+        --user="$USER" \
+	-ti \
+        --hostname="$(hostname)-D" \
+        -e DISPLAY=unix:0 \
+        -e USER=$USER \
+        -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
         --workdir $(pwd) \
-	"$@" \
-        "$IMAGE" "$SHELL"
+	"$IMAGE" \
+        "$SHELL"
+}
+
+function Z(){
+	docker_base \
+        --hostname="$(hostname)-Z" \
+        --workdir $(pwd) \
+	-P \
+	"$IMAGE" \
+	"$@"
 }

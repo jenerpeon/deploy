@@ -30,7 +30,7 @@ RUN locale-gen
 
 # SSHD
 RUN ssh-keygen -A
-RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
 
 
 EXPOSE 22

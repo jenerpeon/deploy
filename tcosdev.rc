@@ -1,5 +1,6 @@
-IMAGE=${IMAGE:-steffenhoenig/tcos-dev:latest}
+IMAGE=${IMAGE:-steffenhoenig/tcos-dev}
 SSH_AGENT=$([ -n "$SSH_AUTH_SOCK" ] && echo "-v $SSH_AUTH_SOCK:$SSH_AUTH_SOCK" || echo "")
+PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
 
 function docker_base() {
         sudo docker run \
@@ -12,7 +13,7 @@ function docker_base() {
         -v $HOME:$HOME \
         `echo $SSH_AGENT` \
         -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK \
-        -e PS1=$PS1 \
+        -e PS1="$PS1" \
         -e LS_COLORS=$LS_COLORS \
         -e LANG=$LANG \
         -e PATH=$PATH \

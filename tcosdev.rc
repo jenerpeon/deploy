@@ -2,7 +2,7 @@ IMAGE=${IMAGE:-steffenhoenig/tcos-dev:latest}
 SSH_AGENT=$([ -n "$SSH_AUTH_SOCK" ] && echo "-v $SSH_AUTH_SOCK:$SSH_AUTH_SOCK" || echo "")
 
 function docker_base() {
-        docker run \
+        sudo docker run \
         --rm \
 	-v /etc/localtime:/etc/localtime \
         -v /etc/passwd:/etc/passwd \
@@ -10,7 +10,7 @@ function docker_base() {
 	-v /etc/group:/etc/group \
 	-v /etc/sudoers:/etc/sudoers \
         -v $HOME:$HOME \
-        $SSH_AGENT \
+        `echo $SSH_AGENT` \
         -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK \
         -e PS1=$PS1 \
         -e LS_COLORS=$LS_COLORS \

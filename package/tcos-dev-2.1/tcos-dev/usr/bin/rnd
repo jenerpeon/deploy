@@ -1,0 +1,5 @@
+#!/bin/bash
+
+COUNT=${1-8}
+
+strings /dev/urandom | grep -o '[[:alnum:]]' | head -n $COUNT | tr -d '\n'; echo

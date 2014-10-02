@@ -40,5 +40,6 @@ function Z(){
         --hostname="$(hostname)-Z" \
         --workdir $(pwd) \
 	-P \
-	"$IMAGE" \
+	"$@" \
+	"$IMAGE"
 }

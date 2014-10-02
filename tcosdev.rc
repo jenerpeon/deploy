@@ -3,7 +3,7 @@ SSH_AGENT=$([ -n "$SSH_AUTH_SOCK" ] && echo "-v $SSH_AUTH_SOCK:$SSH_AUTH_SOCK" |
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
 EXEC=${SHELL}
 
-docker_base() {
+docker_base(){
         sudo docker run \
         --user="$USER" \
         --rm \
@@ -22,7 +22,7 @@ docker_base() {
 	"$@"
 }
 
-D() {
+D(){
         docker_base \
 	-ti \
         --hostname="$(hostname)-D" \

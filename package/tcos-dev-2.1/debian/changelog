@@ -1,3 +1,24 @@
+tcos-dev (2.1-11) UNRELEASED; urgency=medium
+
+  * fixed metadata creation in case of special hash option 
+  * fixed an issue with "DEV" mode (thx to Simon)
+
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Wed, 01 Oct 2014 19:51:34 +0200
+
+tcos-dev (2.1-9) unstable; urgency=low
+
+  * added rnd utility to generate hashes (e.G. 'rnd 15' generates a hash with
+    15 character)
+  * bugfixes around "--hash" 
+
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Mon, 29 Sep 2014 12:59:03 +0200
+
+tcos-dev (2.1-8) unstable; urgency=medium
+
+  * added a dir check (look for debian/changelog) 
+
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Sat, 27 Sep 2014 15:16:23 +0200
+
 tcos-dev (2.1-7) unstable; urgency=low
 
   * fixed --test remote path 

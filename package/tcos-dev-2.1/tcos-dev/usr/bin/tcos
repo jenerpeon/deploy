@@ -9,18 +9,15 @@
 # Author: Steffen Hönig
 #
 #
-
-
-
 VERSION=$(dpkg -l | grep -i tcos-dev | awk '{ print $3 }');VERSION=${VERSION:-"latest"}
 ARCH=${ARCH:-i386}
 
 # includes
 
-[ "$DEV" = "true" ] && set -x; PREFIX="$HOME/.local/share" || PREFIX="/usr/share"
+[ "$DEV" = "true" ] && set -x && PRE="$HOME/.local/share" || PRE="/usr/share"
 
-. "$PREFIX"/tcos-dev/functions/ini_parser
-. "$PREFIX"/tcos-dev/functions/usage
+. "$PRE"/tcos-dev/functions/ini_parser
+. "$PRE"/tcos-dev/functions/usage
 
 # config file: ~/.tcosconfig > /etc/tcos-dev/tcosconfig
 

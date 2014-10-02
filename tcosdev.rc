@@ -1,9 +1,11 @@
 IMAGE=${IMAGE:-steffenhoenig/tcos-dev}
 SSH_AGENT=$([ -n "$SSH_AUTH_SOCK" ] && echo "-v $SSH_AUTH_SOCK:$SSH_AUTH_SOCK" || echo "")
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
+EXEC=${SHELL}
 
 function docker_base() {
         sudo docker run \
+        --user="$USER" \
         --rm \
 	-v /etc/localtime:/etc/localtime \
         -v /etc/passwd:/etc/passwd \
@@ -22,15 +24,15 @@ function docker_base() {
 
 function D() {
         docker_base \
-        --user="$USER" \
 	-ti \
         --hostname="$(hostname)-D" \
         -e DISPLAY=unix:0 \
         -e USER=$USER \
         -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
         --workdir $(pwd) \
+	"$@" \
 	"$IMAGE" \
-        "$SHELL"
+        "$EXEC"
 }
 
 function Z(){
@@ -39,5 +41,4 @@ function Z(){
         --workdir $(pwd) \
 	-P \
 	"$IMAGE" \
-	"$@"
 }

@@ -5,14 +5,13 @@ EXEC=${SHELL}
 
 docker_base(){
         sudo docker run \
-        --user="$USER" \
-        --rm \
 	-v /etc/localtime:/etc/localtime \
         -v /etc/passwd:/etc/passwd \
         -v /etc/shadow:/etc/shadow \
 	-v /etc/group:/etc/group \
 	-v /etc/sudoers:/etc/sudoers \
         -v $HOME:$HOME \
+	-e HOME=$HOME \
         `echo $SSH_AGENT` \
         -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK \
         -e PS1="$PS1" \
@@ -24,6 +23,8 @@ docker_base(){
 
 D(){
         docker_base \
+        --user="$USER" \
+        --rm \
 	-ti \
         --hostname="$(hostname)-D" \
         -e DISPLAY=unix:0 \
@@ -38,8 +39,7 @@ D(){
 Z(){
 	docker_base \
         --hostname="$(hostname)-Z" \
-        --workdir $(pwd) \
-	-P \
+	-d \
 	"$@" \
 	"$IMAGE"
 }

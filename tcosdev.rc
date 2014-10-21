@@ -26,10 +26,10 @@ docker_base(){
 docker_chroot(){
 	container="$1"
 	command="$2"
-	if ! docker ps | grep -i ${container} &>/dev/null; then
-		$(docker run -d --name ${container} $IMAGE) || $(docker start ${container})
+	if ! ( docker ps | awk '{print $NF}' | grep -w $container ) ; then
+		( docker run -d --name $container $IMAGE ) || ( docker start $container )
 	fi
-	docker exec -it ${container} $(echo ${command})
+	docker exec -it $container $(echo ${command})
 }
 
 nuke_d(){

@@ -10,6 +10,8 @@ docker_base(){
         -v /etc/shadow:/etc/shadow \
 	-v /etc/group:/etc/group \
 	-v /etc/sudoers:/etc/sudoers \
+	-v /var/run/docker.sock:/var/run/docker.sock \
+	-v $(which docker):/usr/bin/docker \
         -v $HOME:$HOME \
 	-e HOME=$HOME \
         `echo $SSH_AGENT` \
@@ -20,6 +22,23 @@ docker_base(){
         -e PATH=$PATH \
 	"$@"
 }
+
+docker_chroot(){
+	container="$1"
+	command="$2"
+	if ! sudo docker ps | grep -i ${container} &>/dev/null; then
+		$(sudo docker run -d --name ${container} $IMAGE) || $(sudo docker start ${container})
+	fi
+	sudo docker exec -it ${container} $(echo ${command})
+}
+
+nuke_d(){
+    #deletes all container
+    docker rm -f $(docker ps -aq)
+    #delees all images
+    docker rmi -f $(docker images -q)
+}
+
 
 D(){
         docker_base \

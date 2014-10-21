@@ -4,7 +4,7 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
 EXEC=${SHELL}
 
 docker_base(){
-        sudo docker run \
+        docker run \
 	-v /etc/localtime:/etc/localtime \
         -v /etc/passwd:/etc/passwd \
         -v /etc/shadow:/etc/shadow \
@@ -26,10 +26,10 @@ docker_base(){
 docker_chroot(){
 	container="$1"
 	command="$2"
-	if ! sudo docker ps | grep -i ${container} &>/dev/null; then
-		$(sudo docker run -d --name ${container} $IMAGE) || $(sudo docker start ${container})
+	if ! docker ps | grep -i ${container} &>/dev/null; then
+		$(docker run -d --name ${container} $IMAGE) || $(docker start ${container})
 	fi
-	sudo docker exec -it ${container} $(echo ${command})
+	docker exec -it ${container} $(echo ${command})
 }
 
 nuke_d(){

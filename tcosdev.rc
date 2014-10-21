@@ -25,7 +25,7 @@ docker_base(){
 
 docker_chroot(){
 	container="$1"
-	command="$2"
+	command="${@:2}"
 	if ! ( docker ps | awk '{print $NF}' | grep -w $container ) ; then
 		( docker run -d --name $container $IMAGE ) || ( docker start $container )
 	fi

@@ -30,7 +30,6 @@ RUN locale-gen
 # SSHD
 RUN ssh-keygen -A
 RUN sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
-RUN echo X11Forwarding yes >> /etc/ssh/ssh_config
 
 # Quirks
 RUN mkdir -p /etc/kernel/postinst.d

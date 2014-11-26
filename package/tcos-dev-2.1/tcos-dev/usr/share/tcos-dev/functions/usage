@@ -1,3 +1,5 @@
+#!/bin/bash
+
 function usage() {
 	cat <<EOF
 Usage:	$(basename $0) <command> [--version] [--test] [--hash] [<args>]
@@ -77,3 +79,13 @@ arguments:
 EOF
 exit 65
 }
+
+function sourced() {
+      local -i rc=1
+      [[ 'source' ==  ${FUNCNAME[1]} ]] && rc=0
+      return $rc
+}
+
+# __main__
+
+sourced ||  usage $@

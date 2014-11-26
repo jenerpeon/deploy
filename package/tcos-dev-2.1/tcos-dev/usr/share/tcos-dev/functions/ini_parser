@@ -36,3 +36,13 @@ function default_section(){
    done < $ini_file
    exit 1
 }
+
+function sourced() {
+      local -i rc=1
+      [[ 'source' ==  ${FUNCNAME[1]} ]] && rc=0
+      return $rc
+}
+
+# __main__
+
+sourced ||  read_section $@

@@ -17,6 +17,7 @@ ARCH=${ARCH:-i386}
 [ "$DEV" = "true" ] && set -x && PRE="$HOME/.local/share" || PRE="/usr/share"
 
 . "$PRE"/tcos-dev/functions/ini_parser
+. "$PRE"/tcos-dev/functions/genpackage
 . "$PRE"/tcos-dev/functions/usage
 
 # config file: ~/.tcosconfig > /etc/tcos-dev/tcosconfig
@@ -227,6 +228,11 @@ case $key in
 	shift
 	[ -z "$1" ] && usage_config
 	config "$@"
+	;;
+    genpackage)
+	shift
+	[ -z "$1" ] && usage_genpackage
+	genpackage "$@"
 	;;
     upload)
 	shift

@@ -1,0 +1,56 @@
+#!/bin/bash
+set -e
+
+TEMPLATE_DIR="/usr/share/tcos-dev/templates/tcos_genpackage"
+DH_MAKE_TEMPLATE_DIR="/usr/share/tcos-dev/templates/dh_make"
+DH_MAKE_OPTS="-n -d -s -t $DH_MAKE_TEMPLATE_DIR"
+INIT_VERSION="2.0-1"
+
+function genpackage() {
+
+    if ! [ $# -ge 1 ];then
+	echo "Not enough parameters."
+	echo
+	exit 1
+    elif [ -d "$1" ];then
+	echo "package already exists"
+    elif [[ ${1:0:1} =~ (-|_) ]];then
+	echo "- and _ are not allowed as first arguments."
+    fi
+
+    package_name="$1"
+    package_dir="$package_name/${package_name}-${INIT_VERSION}"
+
+    # generate skeleton
+    $(mkdir -p "$package_dir" && \
+	cd "$package_dir" && \
+	dh_make -y -n -d -s -t "$DH_MAKE_TEMPLATE_DIR" --packagename $package_name ${@:2} &>/dev/null)
+
+
+    # copy dh templates to $package
+    cp -a "$TEMPLATE_DIR"/* "$package_dir"
+
+
+    # rename files/directories with placeholder "package" to $package_name
+    for file in $(find "$package_dir" -name "*__package__*");do
+	mv $file $(dirname "$file")/$(basename ${file//__package__/$package_name})
+    done
+
+
+    # substitute #PACKAGE# with $package
+    for file in $(find "$package_dir" -type f);do
+	sed -i -s "s/#PACKAGE#/$package_name/g" $file
+    done
+
+    echo "Generated source archive: $package_dir"
+}
+
+function sourced() {
+      local -i rc=1
+      [[ 'source' ==  ${FUNCNAME[1]} ]] && rc=0
+      return $rc
+}
+
+# __main__
+
+sourced ||  genpackage $@

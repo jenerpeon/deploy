@@ -6,6 +6,7 @@ available commands:
   build		creates tcos packages
   clean		removes temporary build files in debian/*
   config	allows to view and set the remote server settings
+  genpackage	generates package skeleton
   upload	uploads a deb file to a repository
 
 EOF
@@ -60,6 +61,18 @@ arguments:
   --server	chooses a server from the .tcosconfig file
   --hash	adds a hash to the directory
   <args>	path to the deb-file
+
+EOF
+exit 65
+}
+
+function usage_genpackage() {
+    cat <<EOF
+Usage: $(basename $0) genpackage package [<args>]
+
+arguments:
+  package	name of the package
+  <args>	additional options for dh_make
 
 EOF
 exit 65

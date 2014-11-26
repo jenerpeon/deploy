@@ -1,6 +1,4 @@
 IMAGE=${IMAGE:-steffenhoenig/tcos-dev}
-GPG_AGENT=$([ -n "GPG_AGENT_INFO" ] && echo "-v ${GPG_AGENT_INFO%%:*}:${GPG_AGENT_INFO%%:*}" || echo "")
-SSH_AGENT=$([ -n "$SSH_AUTH_SOCK" ] && echo "-v $SSH_AUTH_SOCK:$SSH_AUTH_SOCK" || echo "")
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
 EXEC=${SHELL}
 
@@ -15,9 +13,6 @@ docker_base(){
 	-v $(which docker):/usr/bin/docker \
         -v $HOME:$HOME \
 	-e HOME=$HOME \
-        `echo $SSH_AGENT` \
-	`echo $GPG_AGENT` \
-        -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK \
         -e PS1="$PS1" \
         -e LS_COLORS=$LS_COLORS \
         -e LANG=$LANG \
@@ -50,7 +45,9 @@ D(){
         --hostname="$(hostname)-D" \
         -e DISPLAY=unix:0 \
         -e USER=$USER \
-        -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
+        -v /tmp/.X11-unix:/tmp/.X11-unix \
+        -v $(readlink -f $SSH_AUTH_SOCK):/ssh-agent \
+        -e SSH_AUTH_SOCK=/ssh-agent \
         --workdir $(pwd) \
 	"$@" \
 	"$IMAGE" \

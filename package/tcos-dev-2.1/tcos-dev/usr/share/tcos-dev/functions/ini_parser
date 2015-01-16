@@ -4,10 +4,10 @@ function read_section(){
 #usage:
 #eval $(read_section <Path to ini> <Section>)
 
-    [ -z "$1" ] || [ -z "$2" ] && exit 1
+    [ -z "$1" ] && exit 1
 
     local ini_file="$1"
-    local ini_section="$2"
+    local ini_section=${2:-$(default_section $1)}
 
     sed -e 's/[[:space:]]*\=[[:space:]]*/=/g' \
 	-e 's/;.*$//' \

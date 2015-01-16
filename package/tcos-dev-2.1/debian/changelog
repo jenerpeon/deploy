@@ -1,10 +1,16 @@
-tcos-dev (2.1-13) UNRELEASED; urgency=low
+tcos-dev (2.1-14) UNRELEASED; urgency=medium
+
+  * ini_parser: looks for default section, if no second argument is provided 
+
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Fri, 16 Jan 2015 18:04:43 +0100
+
+tcos-dev (2.1-13) unstable; urgency=low
 
   * new option "tcos genpackage" creates package skeletons 
   * removed legacy tcos_ apps
   * fixed missing package-rootfs directory
 
- -- Steffen Hoenig <s.hoenig@openthinclient.com>  Wed, 26 Nov 2014 18:20:16 +0100
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Fri, 16 Jan 2015 18:04:39 +0100
 
 tcos-dev (2.1-11) unstable; urgency=medium
 

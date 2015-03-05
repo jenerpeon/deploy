@@ -39,7 +39,6 @@ nuke_d(){
 
 D(){
         docker_base \
-        --user="$USER" \
         --rm \
 	-ti \
         --hostname="$(hostname)-D" \

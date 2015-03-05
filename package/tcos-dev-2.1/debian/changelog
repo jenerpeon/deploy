@@ -1,8 +1,16 @@
-tcos-dev (2.1-14) UNRELEASED; urgency=medium
+tcos-dev (2.1-16) UNRELEASED; urgency=medium
+
+  * changed the logic for copying the changelog file
+  * remove debian/files more often 
+
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Thu, 05 Mar 2015 13:47:18 +0100
+
+tcos-dev (2.1-15) unstable; urgency=medium
 
   * ini_parser: looks for default section, if no second argument is provided 
+  * ini_parser: "-r" option only shows the remote part of the selection 
 
- -- Steffen Hoenig <s.hoenig@openthinclient.com>  Fri, 16 Jan 2015 18:04:43 +0100
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Thu, 05 Mar 2015 13:47:14 +0100
 
 tcos-dev (2.1-13) unstable; urgency=low
 

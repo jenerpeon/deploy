@@ -9,6 +9,8 @@
 # Author: Steffen Hönig
 #
 #
+set -x
+
 VERSION=$(dpkg -l | grep -i tcos-dev | awk '{ print $3 }');VERSION=${VERSION:-"latest"}
 ARCH=${ARCH:-i386}
 
@@ -87,10 +89,13 @@ function build() {
 		;;
 	esac
     done
+    # remove generated debian/files file
+    rm debian/files
     dpkg-buildpackage "${fakeroot}" -us -uc -a${ARCH} $build_args
     # copy changelog
     package_name=$(head -1 debian/changelog | awk '{print $1}')
-    if [ "$package_name" ]; then
+    echo $package_name
+    if [ -n "$package_name" ]; then
 	cp debian/changelog ../"$package_name".changelog
     fi
     if [ "$test" ];then

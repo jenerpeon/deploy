@@ -6,8 +6,24 @@ function read_section(){
 
     [ -z "$1" ] && exit 1
 
+    if [ "$1" == "-r" ];then
+	shift
+	show_only_remote=1
+    fi
+
     local ini_file="$1"
     local ini_section=${2:-$(default_section $1)}
+
+    if (( $show_only_remote ));then
+    sed -e 's/[[:space:]]*\=[[:space:]]*/=/g' \
+	-e 's/;.*$//' \
+	-e 's/[[:space:]]*$//' \
+	-e 's/^[[:space:]]*//' \
+	-e "s/^\(.*\)=\([^\"']*\)$/\1=\"\2\"/" \
+       < "$ini_file" \
+       | sed -n -e "/^\[$ini_section\]/,/^\s*\[/{/^[^;].*\=.*/p;}" \
+       | awk 'match($0,/remote="(.*)"/,a) {print a[1]}'
+    else
 
     sed -e 's/[[:space:]]*\=[[:space:]]*/=/g' \
 	-e 's/;.*$//' \
@@ -15,8 +31,10 @@ function read_section(){
 	-e 's/^[[:space:]]*//' \
 	-e "s/^\(.*\)=\([^\"']*\)$/\1=\"\2\"/" \
        < "$ini_file" \
-	| sed -n -e "/^\[$ini_section\]/,/^\s*\[/{/^[^;].*\=.*/p;}"
+       | sed -n -e "/^\[$ini_section\]/,/^\s*\[/{/^[^;].*\=.*/p;}"
+    fi
 }
+
 
 function default_section(){
 #usage:

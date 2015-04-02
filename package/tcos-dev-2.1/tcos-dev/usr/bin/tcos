@@ -9,7 +9,7 @@
 # Author: Steffen Hönig
 #
 #
-set -x
+[ "$DEBUG" = "yes" ] && set -x
 
 VERSION=$(dpkg -l | grep -i tcos-dev | awk '{ print $3 }');VERSION=${VERSION:-"latest"}
 ARCH=${ARCH:-i386}
@@ -90,7 +90,7 @@ function build() {
 	esac
     done
     # remove generated debian/files file
-    rm debian/files
+    [ -f debian/files ] && rm -f debian/files
     dpkg-buildpackage "${fakeroot}" -us -uc -a${ARCH} $build_args
     # copy changelog
     package_name=$(head -1 debian/changelog | awk '{print $1}')

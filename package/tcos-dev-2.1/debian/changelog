@@ -1,9 +1,15 @@
-tcos-dev (2.1-16) UNRELEASED; urgency=medium
+tcos-dev (2.1-17) UNRELEASED; urgency=low
+
+  * added package-rootfs/__package__ to the thes tcos_genpackage template 
+
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Thu, 02 Apr 2015 16:26:00 +0200
+
+tcos-dev (2.1-16) unstable; urgency=medium
 
   * changed the logic for copying the changelog file
   * remove debian/files more often 
 
- -- Steffen Hoenig <s.hoenig@openthinclient.com>  Thu, 05 Mar 2015 13:47:18 +0100
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Thu, 02 Apr 2015 16:25:57 +0200
 
 tcos-dev (2.1-15) unstable; urgency=medium
 

@@ -41,3 +41,5 @@ Z [optional docker options]
 
 D = interactive development profile
 Z = starts sshd and is meant for services
+
+little hint, if you'd like to use the Docker session over ssh, don't forget "ssh -A"

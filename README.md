@@ -30,16 +30,10 @@ docker pull steffenhoenig/tcos-dev
 source tcosdev.rc
 
 ```
-D [optional docker options]
+D --user=$USER [optional docker options]
 ```
-
--or-
-
-```
-Z [optional docker options]
 
 
 D = interactive development profile
-Z = starts sshd and is meant for services
 
 little hint, if you'd like to use the Docker session over ssh, don't forget "ssh -A"

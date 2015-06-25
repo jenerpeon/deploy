@@ -57,6 +57,7 @@ exit 65
 }
 
 function build() {
+    [ -d debian ] || (echo "./debian is missing. Cannot continue to build. Aborting. " && exit 1)
     fakeroot="-rfakeroot"
     build_args=""
     section=$DEFAULT_SECTION
@@ -89,12 +90,15 @@ function build() {
 		;;
 	esac
     done
-    # remove generated debian/files file
-    [ -f debian/files ] && rm -f debian/files
-    dpkg-buildpackage "${fakeroot}" -us -uc -a${ARCH} $build_args
-    # copy changelog
+    # empty generated debian/files file
     package_name=$(head -1 debian/changelog | awk '{print $1}')
     echo $package_name
+    [ -f debian/files ] && :>  debian/files
+    # quirks
+    rm -rf debian/tempcopy
+    mkdir -p package-rootfs/opt/$package_name
+    dpkg-buildpackage "${fakeroot}" -us -uc -a${ARCH} $build_args
+    # copy changelog
     if [ -n "$package_name" ]; then
 	cp debian/changelog ../"$package_name".changelog
     fi
@@ -162,7 +166,6 @@ function upload_file() {
 }
 
 function upload() {
-
    upload_args=""
 
    #get default values
@@ -204,11 +207,17 @@ function upload() {
 	  changes=$(ls ${dn}/${base}_${upstream_version}-${package_version}*changes)
 	  dsc=${dn}/${base}_${upstream_version}-${package_version}.dsc
 	  tgz=${dn}/${base}_${upstream_version}-${package_version}.tar.gz
-	  echo -e "Uploading:\n"
 	  for f in $d $dsc $changes $changelog $tgz;do
-	      echo -e "--> $f\n"
-	      upload_file "$remote" "$dir" "$f" "$base"
+	     [ -f "$f" ] || (echo "$f is missing. Aborting."  && exit 1)
 	  done
+	  if [ "$hash" ]; then
+	     echo -e "Uploading: to $remote:$dir_$hash/ \n"
+	     
+             rsync -av $d $dsc $changes $changelog $tgz $remote:$dir_$hash/
+          else
+	     echo -e "Uploading: to $remote:$dir/ \n"
+	     rsync -av $d $dsc $changes $changelog $tgz $remote:$dir/
+          fi
 	  echo -e "Generating: Packages.gz\n"
 	  update_metadata "$remote" "$dir" "$base" "$http"
       fi

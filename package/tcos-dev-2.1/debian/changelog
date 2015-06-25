@@ -1,8 +1,15 @@
-tcos-dev (2.1-17) UNRELEASED; urgency=low
+tcos-dev (2.1-18) UNRELEASED; urgency=low
+
+  * replaced the upload method with rsync
+  * added some quirk handling to make it more robust  
+
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Thu, 25 Jun 2015 16:37:36 +0200
+
+tcos-dev (2.1-17) unstable; urgency=low
 
   * added package-rootfs/__package__ to the thes tcos_genpackage template 
 
- -- Steffen Hoenig <s.hoenig@openthinclient.com>  Thu, 02 Apr 2015 16:26:00 +0200
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Thu, 25 Jun 2015 16:37:31 +0200
 
 tcos-dev (2.1-16) unstable; urgency=medium
 

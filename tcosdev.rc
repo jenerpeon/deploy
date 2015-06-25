@@ -1,9 +1,11 @@
+
 IMAGE=${IMAGE:-steffenhoenig/tcos-dev}
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
 EXEC=${SHELL}
+[ "$(id -u)" != "0" ] && SUDO=sudo
 
 docker_base(){
-        docker run \
+        $SUDO docker run \
 	-v /etc/localtime:/etc/localtime \
         -v /etc/passwd:/etc/passwd \
         -v /etc/shadow:/etc/shadow \
@@ -38,18 +40,18 @@ nuke_d(){
 
 
 D(){
+set -x
         docker_base \
         --rm \
 	-ti \
+	--security-opt="label:disable" \
         --hostname="$(hostname)-D" \
         -e DISPLAY=unix:0 \
         -e USER=$USER \
         -v /tmp/.X11-unix:/tmp/.X11-unix \
-        -v $(readlink -f $SSH_AUTH_SOCK):/ssh-agent \
-        -e SSH_AUTH_SOCK=/ssh-agent \
         --workdir $(pwd) \
 	"$@" \
-	"$IMAGE" \
+	$IMAGE \
         "$EXEC"
 }
 

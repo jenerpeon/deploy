@@ -4,7 +4,7 @@
 #
 # VERSION	development
 
-FROM joeyh/debian-stable-i386
+FROM joeyh/debian-stable-i386:latest
 MAINTAINER Steffen Hoenig "s.hoenig@openthinclient.com"
 
 ENV DEBIAN_FRONTEND noninteractive

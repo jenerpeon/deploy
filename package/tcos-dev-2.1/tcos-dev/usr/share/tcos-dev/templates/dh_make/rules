@@ -51,17 +51,17 @@ install: build
 	dh_testroot
 	dh_clean -k#PRESERVE#
 
-# 	# copy the things we need inside a temporary copy 
+# 	# copy the things we need inside a temporary copy
 #	# we use hardlinks to save time and discspace
 
 
-	rm -rf debian/tempcopy debian/#PACKAGE# 
+	rm -rf debian/tempcopy debian/#PACKAGE#
 	mkdir -p debian/tempcopy debian/#PACKAGE#/sfs/package && \
 	cp -al package-rootfs debian/tempcopy/ && \
-	cp -al tcos debian/tempcopy/package-rootfs/opt/#PACKAGE#/ 
+	cp -al tcos debian/tempcopy/package-rootfs/opt/#PACKAGE#/
 
 	cd debian/tempcopy/package-rootfs && mksquashfs . ../../#PACKAGE#/sfs/package/#PACKAGE#.sfs -noappend -always-use-fragments
-#	# schema is not a part of the sfs-file 
+#	# schema is not a part of the sfs-file
 	cp -al schema debian/#PACKAGE#/
 
 # Build architecture-independent files here.
@@ -77,7 +77,7 @@ binary-arch: build install
 #	dh_installexamples
 #	dh_install
 #	dh_installmenu
-#	dh_installdebconf	
+#	dh_installdebconf
 #	dh_installlogrotate
 #	dh_installemacsen
 #	dh_installpam
@@ -97,7 +97,7 @@ binary-arch: build install
 	dh_shlibdeps
 	dh_gencontrol
 	dh_md5sums
-	dh_builddeb
+	dh_builddeb -- -Zgzip
 
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install #PHONY_CONFIGURE#

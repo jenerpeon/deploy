@@ -103,8 +103,8 @@ function build() {
 	cp debian/changelog ../"$package_name".changelog
     fi
     if [ "$test" ];then
-	rsync -vaP debian/${package_name}/sfs/package/${package_name}.sfs ${remote}:/opt/openthinclient/server/default/data/nfs/root/sfs/package
-	rsync -vaP schema/ ${remote}:/opt/openthinclient/server/default/data/nfs/root/schema/
+	rsync -vaP schema/ ${remote}:/opt/openthinclient/server/default/data/nfs/root/schema/ || /bin/true
+	rsync -vaP debian/${package_name}/sfs/package/${package_name}.sfs ${remote}:/opt/openthinclient/server/default/data/nfs/root/sfs/package || /bin/true
     fi
 
 

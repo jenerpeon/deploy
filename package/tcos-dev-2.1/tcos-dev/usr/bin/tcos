@@ -209,14 +209,14 @@ function upload() {
 	  tgz=${dn}/${base}_${upstream_version}-${package_version}.tar.gz
 	  for f in $d $dsc $changes $changelog $tgz;do
 	     [ -f "$f" ] || (echo "$f is missing. Aborting."  && exit 1)
-	  done
+	  
 	  if [ "$hash" ]; then
-	     echo -e "Uploading: to $remote:$dir_$hash/ \n"
+	     echo -e "Uploading: to ${remote}:${dir}/${base}_$hash/ \n"
 
-             rsync -av $d $dsc $changes $changelog $tgz $remote:$dir_$hash/
+             rsync -av $d $dsc $changes $changelog $tgz ${remote}:${dir}/${base}_${hash}/
           else
-	     echo -e "Uploading: to $remote:$dir/ \n"
-	     rsync -av $d $dsc $changes $changelog $tgz $remote:$dir/
+	     echo -e "Uploading: to ${remote}:$dir/${base}/ \n"
+	     rsync -av $d $dsc $changes $changelog $tgz ${remote}:${dir}/${base}
           fi
 	  echo -e "Generating: Packages.gz\n"
 	  update_metadata "$remote" "$dir" "$base" "$http"

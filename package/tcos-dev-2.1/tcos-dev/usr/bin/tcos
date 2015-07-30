@@ -215,7 +215,7 @@ function upload() {
               rsync -av $d $dsc $changes $changelog $tgz ${remote}:${dir}/${base}_${hash}/
           else
               echo -e "Uploading: to ${remote}:$dir/${base}/ \n"
-              rsync -av $d $dsc $changes $changelog $tgz ${remote}:${dir}/${base}
+              rsync -av $d $dsc $changes $changelog $tgz ${remote}:${dir}/
           fi
     	  echo -e "Generating: Packages.gz\n"
       fi

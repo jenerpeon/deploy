@@ -194,33 +194,32 @@ function upload() {
   debs=${upload_args}
   for d in $debs;do
       if echo $d | /bin/grep -qs "\.deb$";then
-	  bn=$(basename $d)
-	  dn=$(dirname $d)
-	  # split debian packages with the help of IFS at "_"
-	  oIFS="$IFS"
-	  IFS='_'; bn_arr=($bn)
-	  IFS="$oIFS"
-	  upstream_version="${bn_arr[1]%-*}"
-	  package_version="${bn_arr[1]##*-}"
-	  base="${bn_arr[0]}"
-	  changelog=${dn}/${base}.changelog
-	  changes=$(ls ${dn}/${base}_${upstream_version}-${package_version}*changes)
-	  dsc=${dn}/${base}_${upstream_version}-${package_version}.dsc
-	  tgz=${dn}/${base}_${upstream_version}-${package_version}.tar.gz
-	  for f in $d $dsc $changes $changelog $tgz;do
-	     [ -f "$f" ] || (echo "$f is missing. Aborting."  && exit 1)
-	  
-	  if [ "$hash" ]; then
-	     echo -e "Uploading: to ${remote}:${dir}/${base}_$hash/ \n"
-
-             rsync -av $d $dsc $changes $changelog $tgz ${remote}:${dir}/${base}_${hash}/
+    	  bn=$(basename $d)
+    	  dn=$(dirname $d)
+    	  # split debian packages with the help of IFS at "_"
+    	  oIFS="$IFS"
+    	  IFS='_'; bn_arr=($bn)
+    	  IFS="$oIFS"
+    	  upstream_version="${bn_arr[1]%-*}"
+    	  package_version="${bn_arr[1]##*-}"
+    	  base="${bn_arr[0]}"
+    	  changelog=${dn}/${base}.changelog
+    	  changes=$(ls ${dn}/${base}_${upstream_version}-${package_version}*changes)
+    	  dsc=${dn}/${base}_${upstream_version}-${package_version}.dsc
+    	  tgz=${dn}/${base}_${upstream_version}-${package_version}.tar.gz
+    	  for f in $d $dsc $changes $changelog $tgz;do
+    	     [ -f "$f" ] || (echo "$f is missing. Aborting."  && exit 1)
+          done
+          if [ "$hash" ]; then
+              echo -e "Uploading: to ${remote}:${dir}/${base}_$hash/ \n"
+              rsync -av $d $dsc $changes $changelog $tgz ${remote}:${dir}/${base}_${hash}/
           else
-	     echo -e "Uploading: to ${remote}:$dir/${base}/ \n"
-	     rsync -av $d $dsc $changes $changelog $tgz ${remote}:${dir}/${base}
+              echo -e "Uploading: to ${remote}:$dir/${base}/ \n"
+              rsync -av $d $dsc $changes $changelog $tgz ${remote}:${dir}/${base}
           fi
-	  echo -e "Generating: Packages.gz\n"
-	  update_metadata "$remote" "$dir" "$base" "$http"
+    	  echo -e "Generating: Packages.gz\n"
       fi
+    	  update_metadata "$remote" "$dir" "$base" "$http"
   done
 }
 

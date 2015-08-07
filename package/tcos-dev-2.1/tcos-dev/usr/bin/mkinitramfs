@@ -1,0 +1,1 @@
+cd ./tmp/initramfs ; find . |cpio -o -H newc| gzip > ../../initrd.gz

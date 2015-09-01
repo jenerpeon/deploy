@@ -7,7 +7,7 @@ Standards-Version: 3.6.2
 
 Package: tcos-dev
 Architecture: all
-Depends: autotools-dev, build-essential, debhelper, devscripts, dh-make, fakeroot, squashfs-tools (>= 4.2), gcc-multilib
+Depends: autotools-dev, build-essential, debhelper, devscripts, dh-make, fakeroot, squashfs-tools (>= 4.2), gcc
 Description: TCOS develeloper package
   This package is used to satisfy build dependencies for the TCOS packages.
   Install this package to get a openthinclient os package build environment.

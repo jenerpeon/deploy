@@ -32,6 +32,7 @@ RUN ssh-keygen -A
 RUN sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config
 
 # Quirks
+RUN dpkg-statoverride --remove /usr/bin/crontab
 RUN mkdir -p /etc/kernel/postinst.d
 
 EXPOSE 22

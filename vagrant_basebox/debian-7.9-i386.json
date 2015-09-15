@@ -97,14 +97,30 @@
   "post-processors": [
     {
       "output": "builds/{{user `box_basename`}}.{{.Provider}}.box",
-      "type": "vagrant"
+      "type": "vagrant",
+      "keep_input_artifact": false
     },
     {
 	    "type": "atlas",
 	    "token": "{{user `atlas_token`}}",
+	    "only": ["vmware-iso"],
 	    "artifact": "steffenhoenig/debian7.9-i386",
-	    "artifact_type": "amazon.ami",
+	    "artifact_type": "vagrant.box",
 	    "metadata": {
+		    "provider": "vmware_desktop",
+		    "version": "0.0.1",
+		    "created_at": "{{timestamp}}"
+	    }
+    },
+    {
+	    "type": "atlas",
+	    "token": "{{user `atlas_token`}}",
+	    "only": ["virtualbox-iso"],
+	    "artifact": "steffenhoenig/debian7.9-i386",
+	    "artifact_type": "vagrant.box",
+	    "metadata": {
+		    "provider": "virtualbox",
+		    "version": "0.0.1",
 		    "created_at": "{{timestamp}}"
 	    }
     }

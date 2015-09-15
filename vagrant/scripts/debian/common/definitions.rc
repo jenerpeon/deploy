@@ -1,0 +1,3 @@
+INSTALL="apt-get install -y --force-yes --no-install-recommends"
+INSTALL_SINGLE="dpkg -i"
+UPDATE="apt-get update"

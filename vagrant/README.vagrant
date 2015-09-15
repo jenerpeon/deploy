@@ -1,0 +1,6 @@
+
+#Helper script for calling the manager: manager <fqdn>
+
+
+#!/bin/bash
+ssh -XC vagrant@${1} javaws -verbose http://localhost:8080/console/launch.jnlp

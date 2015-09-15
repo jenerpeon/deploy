@@ -1,0 +1,4 @@
+mkdir -p tmp/initramfs && \
+cd tmp/initramfs && \
+unzip -c ../../$1 || lzma -d -f -c ../../$1 | \
+cpio -i -d -H newc --no-absolute-filenames

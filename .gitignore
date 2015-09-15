@@ -7,3 +7,7 @@
 *-stamp
 package/tcos-dev-2.1/debian/tcos-dev/
 package/tcos-dev_2.1-*
+data/*
+!data/.noempty
+vagrant_basebox/builds/
+vagrant/packer_cache/

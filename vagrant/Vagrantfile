@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
 	
 	config.vm.define :dev do |dev|
 		dev.vm.hostname = "os-" + user
-		dev.vm.network :public_network, :bridge => "enp0s25"
+		dev.vm.network :public_network
 		dev.ssh.forward_agent = true
 		dev.ssh.insert_key = false
 		dev.ssh.private_key_path = ['~/.vagrant.d/insecure_private_key', '~/.ssh/id_rsa']
@@ -46,7 +46,7 @@ Vagrant.configure("2") do |config|
 		dev.vm.synced_folder home, "/home/" + user, id: "home" + user, 
 			:nfs => true,
 			:mount_options => ["actimeo=2"]
-		dev.vm.synced_folder "./", "/vagrant"
+		dev.vm.synced_folder "../", "/vagrant"
 	end
 	
 	config.vm.define :prod do |prod|

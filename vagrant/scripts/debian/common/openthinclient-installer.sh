@@ -14,7 +14,7 @@ usermod -a -G www-data,staff vagrant
 [ -f "/vagrant/data/${OPENTHINCLIENT_INSTALLER}" ] || ( cd /vagrant/data; wget -c http://packages.openthinclient.org/openthinclient/installer/${OPENTHINCLIENT_INSTALLER})
 
 # provoke an exception to automate the installer
-echo -e '\n' | java -jar /vagrant/data/openthinclient-2.1-Pales.jar -console || /bin/true
+echo -e '\n' | java -jar /vagrant/data/openthinclient-*.jar -console || /bin/true
 # move it to /opt
 pwd
 mv /usr/local/openthinclient /opt

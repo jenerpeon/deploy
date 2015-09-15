@@ -1,3 +1,17 @@
+The vagrant box creates a Debian 7.x (i686) with an instance of the openthinclient-suite and.
+
+There are two definitions:
+* dev (with all develop-tools onboard, nfs-mount for performance reasons) 
+* prod (uses more cpu and ram of the host-system)
+
+``$ vagrant up dev`` or ``$ vagrant up prod``
+
+*Before* starting the VMs you need to put an installer jar to data
+
+``$ cp /path/to/consus-<version>-<name>.jar ../data``
+
+You can find the *latest* installer at [sourceforge](http://sourceforge.net/projects/openthinclient/files/installer/)
+
 
 #Helper script for calling the manager: manager <fqdn>
 

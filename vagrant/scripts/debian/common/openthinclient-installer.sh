@@ -24,6 +24,7 @@ chmod -R g+w /opt/openthinclient
 ln -s /opt/openthinclient/bin/start.sh /etc/init.d/openthinclient
 update-rc.d openthinclient defaults
 update-rc.d -f rpcbind remove
+ln -snf /bin/true /etc/init.d/rpcbind || /bin/true
 
 # httpd
 SOURCES_LIST="/opt/openthinclient/server/default/data/nfs/root/etc/sources.list"
@@ -33,6 +34,5 @@ sudo chown -R www-data:www-data /var/www/openthinclient/
 sudo chmod -R g+w /var/www/openthinclient
 touch /var/www/openthinclient/manager-rolling/packages
 su -c "archive_metadata /var/www/openthinclient/manager-rolling" vagrant
-
 /etc/init.d/openthinclient restart
 exit 0

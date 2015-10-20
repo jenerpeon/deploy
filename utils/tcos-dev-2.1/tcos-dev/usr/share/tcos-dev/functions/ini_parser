@@ -6,35 +6,41 @@ function read_section(){
 
     [ -z "$1" ] && exit 1
 
-    if [ "$1" == "-r" ];then
-	shift
-	show_only_remote=1
+    if [ "$1" == "-g" ];then
+        shift
+        show_global=1
     fi
 
     local ini_file="$1"
     local ini_section=${2:-$(default_section $1)}
+    parse $ini_file $ini_section
 
-    if (( $show_only_remote ));then
-    sed -e 's/[[:space:]]*\=[[:space:]]*/=/g' \
-	-e 's/;.*$//' \
-	-e 's/[[:space:]]*$//' \
-	-e 's/^[[:space:]]*//' \
-	-e "s/^\(.*\)=\([^\"']*\)$/\1=\"\2\"/" \
-       < "$ini_file" \
-       | sed -n -e "/^\[$ini_section\]/,/^\s*\[/{/^[^;].*\=.*/p;}" \
-       | awk 'match($0,/remote="(.*)"/,a) {print a[1]}'
-    else
-
-    sed -e 's/[[:space:]]*\=[[:space:]]*/=/g' \
-	-e 's/;.*$//' \
-	-e 's/[[:space:]]*$//' \
-	-e 's/^[[:space:]]*//' \
-	-e "s/^\(.*\)=\([^\"']*\)$/\1=\"\2\"/" \
-       < "$ini_file" \
-       | sed -n -e "/^\[$ini_section\]/,/^\s*\[/{/^[^;].*\=.*/p;}"
-    fi
 }
 
+#usage:
+#parse <file> <section>
+function parse(){
+    ini_file=$1
+
+    if (( $show_global ));then
+      ini_section="global"
+    else
+      ini_section=$2
+    fi
+
+    result=$(\
+    sed -e 's/[[:space:]]*\=[[:space:]]*/=/g' \
+	-e 's/;.*$//' \
+	-e 's/[[:space:]]*$//' \
+	-e 's/^[[:space:]]*//' \
+	-e "s/^\(.*\)=\([^\"']*\)$/\1=\"\2\"/" \
+       < "$ini_file" \
+       | sed -n -e "/^\[$ini_section\]/,/^\s*\[/{/^[^;].*\=.*/p;}")
+
+    for r in $result;do
+      echo $r
+    done
+}
 
 function default_section(){
 #usage:
@@ -48,7 +54,12 @@ function default_section(){
 
    while read line;do
        if [[ $line =~ $section_xp ]];then
-           echo "${BASH_REMATCH[1]}"
+           # don't print global section
+           if [ "${BASH_REMATCH[1]}" == "global" ];then
+             continue
+           else
+             echo "${BASH_REMATCH[1]}"
+           fi
            exit 0
        fi
    done < $ini_file

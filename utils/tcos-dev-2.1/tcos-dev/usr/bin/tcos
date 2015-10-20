@@ -220,6 +220,9 @@ function upload() {
     	  echo -e "Generating: Packages.gz\n"
       fi
     	  update_metadata "$remote" "$dir" "$base" "$http"
+          # get the url to notify uploads
+          eval $(read_section $INI_FILE global)
+          [ -n $update_url -a "$notify" != "false" ] && curl $(echo $update_url | sed -e "s|#REPLACEME#|${base}-${upstream_version}-${package_version}|g")
   done
 }
 

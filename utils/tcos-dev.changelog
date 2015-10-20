@@ -1,8 +1,14 @@
-tcos-dev (2.1-24) UNRELEASED; urgency=medium
+tcos-dev (2.1-25) UNRELEASED; urgency=low
+
+  * new: [global] section and "update_url" variable to notify for uploads 
+
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Tue, 20 Oct 2015 17:16:38 +0000
+
+tcos-dev (2.1-24) unstable; urgency=medium
 
   * changed dep from gcc-multilib to gcc
 
- -- Steffen Hoenig <s.hoenig@openthinclient.com>  Tue, 01 Sep 2015 18:43:25 +0200
+ -- Steffen Hoenig <s.hoenig@openthinclient.com>  Tue, 20 Oct 2015 17:16:30 +0000
 
 tcos-dev (2.1-23) unstable; urgency=medium
 

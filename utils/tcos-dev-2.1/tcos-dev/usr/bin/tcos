@@ -69,6 +69,10 @@ function build() {
 		shift
 		fakeroot="-rfakeroot -u"
 		;;
+            -b)
+                shift
+		build_args="${build_args} -b"
+		;;
 	    --server)
 		shift
 		#override default values
@@ -85,11 +89,11 @@ function build() {
 		shift
 		;;
 	    *)
-		shift
-		build_args="${build_args} ${key}"
+                shift
 		;;
 	esac
     done
+    set -x 
     # empty generated debian/files file
     package_name=$(head -1 debian/changelog | awk '{print $1}')
     echo $package_name
@@ -98,6 +102,7 @@ function build() {
     rm -rf debian/tempcopy
     mkdir -p package-rootfs/opt/$package_name
     dpkg-buildpackage "${fakeroot}" -us -uc -a${ARCH} $build_args
+    set +x
     # copy changelog
     if [ -n "$package_name" ]; then
 	cp debian/changelog ../"$package_name".changelog

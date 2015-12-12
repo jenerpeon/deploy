@@ -11,7 +11,7 @@ eval "$INSTALL $PACKAGES"
 usermod -a -G www-data,staff vagrant
 
 # get the installer if necessary 
-[ -f "/vagrant/data/${OPENTHINCLIENT_INSTALLER}" ] || ( cd /vagrant/data; wget -c http://packages.openthinclient.org/openthinclient/installer/${OPENTHINCLIENT_INSTALLER})
+[ -f "/vagrant/data/${OPENTHINCLIENT_INSTALLER}" ] || ( cd /vagrant/data; wget -c http://sourceforge.net/projects/openthinclient/files/installer/${OPENTHINCLIENT_INSTALLER})
 
 # provoke an exception to automate the installer
 echo -e '\n' | java -jar /vagrant/data/openthinclient-*.jar -console || /bin/true

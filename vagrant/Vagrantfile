@@ -6,9 +6,6 @@ home = ENV['HOME']
 nic = ENV['NIC']
 
 Vagrant.configure("2") do |config|
-	config.vm.box = "steffenhoenig/debian7.9-i386"
-	config.vm.provision :shell, :path => './scripts/debian/7/bootstrap.sh', args: user
-	config.vm.provision :shell, :path => './scripts/debian/common/jre-oracle-7.sh'
 	
 	#credit goes to Stefan Wrobel https://stefanwrobel.com/how-to-make-vagrant-performance-not-suck
 	config.vm.provider :virtualbox do |vb|
@@ -30,29 +27,35 @@ Vagrant.configure("2") do |config|
 		vb.customize ["modifyvm", :id, "--cpus", cpus]
 	end
 	
-	config.vm.define :dev do |dev|
-		dev.vm.hostname = "os-" + user
-		dev.vm.network :public_network, :bridge => nic
-		dev.ssh.forward_agent = true
-		dev.ssh.insert_key = true
+	config.vm.define :otc_dev do |otc_dev|
+    	otc_dev.vm.box = "steffenhoenig/debian7.9-i386"
+    	otc_dev.vm.provision :shell, :path => './scripts/debian/7/bootstrap.sh', args: user
+    	otc_dev.vm.provision :shell, :path => './scripts/debian/common/jre-oracle-7.sh'
+		otc_dev.vm.hostname = "os-" + user
+		otc_dev.vm.network :public_network, :bridge => nic
+		otc_dev.ssh.forward_agent = true
+		otc_dev.ssh.insert_key = true
 		#dev.ssh.private_key_path = ['~/.vagrant.d/insecure_private_key', '~/.ssh/id_rsa']
-		dev.vm.provision :shell, :path => './scripts/debian/common/jre-oracle-8.sh'
-		dev.vm.provision "shell", inline: "sudo update-java-alternatives -s java-7-oracle"
-		dev.vm.provision :shell, :path => './scripts/debian/common/openthinclient-installer.sh'
-		dev.vm.provision :shell, :path => './scripts/debian/common/enable-all-repos.sh'
-		dev.vm.provision :shell, :path => './scripts/debian/common/tcos-dev.sh'
+		otc_dev.vm.provision :shell, :path => './scripts/debian/common/jre-oracle-8.sh'
+		otc_dev.vm.provision "shell", inline: "sudo update-java-alternatives -s java-7-oracle"
+		otc_dev.vm.provision :shell, :path => './scripts/debian/common/openthinclient-installer.sh'
+		otc_dev.vm.provision :shell, :path => './scripts/debian/common/enable-all-repos.sh'
+		otc_dev.vm.provision :shell, :path => './scripts/debian/common/tcos-dev.sh'
 
-		dev.vm.synced_folder home, "/home/" + user, id: "home" + user 
-		dev.vm.synced_folder "../", "/vagrant"
+		otc_dev.vm.synced_folder home, "/home/" + user, id: "home" + user 
+		otc_dev.vm.synced_folder "../", "/vagrant"
 	end
 	
-	config.vm.define :prod do |prod|
-		prod.vm.hostname = "openthinclient-server"
-		prod.vm.network :public_network, :bridge => "eth0"
-		prod.vm.synced_folder "../", "/vagrant"
-		prod.vm.provision "shell", inline: "sudo cp /vagrant/data/tools/archive_metadata /usr/bin"
-		prod.vm.provision :shell, :path => './scripts/debian/common/openthinclient-installer.sh'
-		prod.vm.provider :virtualbox do |vb|
+	config.vm.define :otc_prod do |otc_prod|
+    	otc_prod.vm.box = "steffenhoenig/debian7.9-i386"
+    	otc_prod.vm.provision :shell, :path => './scripts/debian/7/bootstrap.sh', args: user
+    	otc_prod.vm.provision :shell, :path => './scripts/debian/common/jre-oracle-7.sh'
+		otc_prod.vm.hostname = "openthinclient-server"
+		otc_prod.vm.network :public_network, :bridge => "eth0"
+		otc_prod.vm.synced_folder "../", "/vagrant"
+		otc_prod.vm.provision "shell", inline: "sudo cp /vagrant/data/tools/archive_metadata /usr/bin"
+		otc_prod.vm.provision :shell, :path => './scripts/debian/common/openthinclient-installer.sh'
+		otc_prod.vm.provider :virtualbox do |vb|
 			# modify mem to full usage
 			mem = `grep 'MemTotal' /proc/meminfo | sed -e 's/MemTotal://' -e 's/ kB//'`.to_i / 1024
 			if mem >= 2048
@@ -61,6 +64,24 @@ Vagrant.configure("2") do |config|
 			vb.customize ["modifyvm", :id, "--memory", mem]
 		end
 	end
+    
+    config.vm.define :java_dev do |java_dev|
+        java_dev.vm.box = "tutum/node"
+        java_dev.vm.hostname = "java-buildserver" 
+        java_dev.vm.network :public_network, :bridge => "eth0"
+        java_dev.ssh.forward_agent = true
+        java_dev.ssh.insert_key = true
+        java_dev.vm.provision :shell, :path => './scripts/debian/common/java-build-deps.sh'
+    	# modify mem to full usage
+       	java_dev.vm.provider :virtualbox do |vb|
+			mem = `grep 'MemTotal' /proc/meminfo | sed -e 's/MemTotal://' -e 's/ kB//'`.to_i / 1024
+			if mem >= 2048
+				mem = 2048
+			end
+			vb.customize ["modifyvm", :id, "--memory", mem]
+		end
+    end
+      
         config.ssh.forward_agent = true
         config.ssh.forward_x11 = true
 end

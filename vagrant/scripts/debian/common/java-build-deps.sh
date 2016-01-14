@@ -2,7 +2,7 @@
 
 INSTALL="apt-get install -y --force-yes --no-install-recommends"
 UPDATE="apt-get update"
-PACKAGES="oracle-java8-installer oracle-java8-set-default maven"
+PACKAGES="oracle-java8-installer oracle-java8-set-default maven git"
 
 echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main"> /etc/apt/sources.list.d/webupd8team-java.list
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886

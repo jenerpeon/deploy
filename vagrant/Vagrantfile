@@ -26,7 +26,8 @@ Vagrant.configure("2") do |config|
 		vb.customize ["modifyvm", :id, "--memory", mem]
 		vb.customize ["modifyvm", :id, "--cpus", cpus]
 	end
-	
+    
+    ### Internal openthinclient development installation ###	
 	config.vm.define :otc_dev do |otc_dev|
     	otc_dev.vm.box = "steffenhoenig/debian7.9-i386"
     	otc_dev.vm.provision :shell, :path => './scripts/debian/7/bootstrap.sh', args: user
@@ -46,6 +47,7 @@ Vagrant.configure("2") do |config|
 		otc_dev.vm.synced_folder "../", "/vagrant"
 	end
 	
+	### Openthinclient installation with full RAM for deploy ###
 	config.vm.define :otc_prod do |otc_prod|
     	otc_prod.vm.box = "steffenhoenig/debian7.9-i386"
     	otc_prod.vm.provision :shell, :path => './scripts/debian/7/bootstrap.sh', args: user
@@ -64,7 +66,46 @@ Vagrant.configure("2") do |config|
 			vb.customize ["modifyvm", :id, "--memory", mem]
 		end
 	end
-    
+
+    ### Openthinclient split: Central LDAP server ###
+	config.vm.define :otc_management do |otc_management|
+    	otc_management.vm.box = "steffenhoenig/debian7.9-i386"
+    	otc_management.vm.provision :shell, :path => './scripts/debian/7/bootstrap.sh', args: user
+    	otc_management.vm.provision :shell, :path => './scripts/debian/common/jre-oracle-7.sh'
+		otc_management.vm.hostname = "openthinclient-management"
+		otc_management.vm.network :public_network, :bridge => "eth0"
+		otc_management.vm.synced_folder "../", "/vagrant"
+		otc_management.vm.provision "shell", inline: "sudo cp /vagrant/data/tools/archive_metadata /usr/bin"
+		otc_management.vm.provision :shell, :path => './scripts/debian/common/openthinclient-installer.sh'
+		otc_management.vm.provider :virtualbox do |vb|
+			# modify mem to full usage
+			mem = `grep 'MemTotal' /proc/meminfo | sed -e 's/MemTotal://' -e 's/ kB//'`.to_i / 1024
+			if mem >= 2048
+				mem = 2048
+			end
+			vb.customize ["modifyvm", :id, "--memory", mem]
+		end
+	end
+
+    ### Openthinclient split: Remote tftp, nfs, dhcp proxy ###
+	config.vm.define :otc_remote do |otc_remote|
+    	otc_remote.vm.box = "steffenhoenig/debian7.9-i386"
+    	otc_remote.vm.provision :shell, :path => './scripts/debian/7/bootstrap.sh', args: user
+    	otc_remote.vm.provision :shell, :path => './scripts/debian/common/jre-oracle-7.sh'
+		otc_remote.vm.hostname = "openthinclient-remote"
+		otc_remote.vm.network :public_network, :bridge => "eth0"
+		otc_remote.vm.synced_folder "../", "/vagrant"
+		otc_remote.vm.provider :virtualbox do |vb|
+			# modify mem to full usage
+			mem = `grep 'MemTotal' /proc/meminfo | sed -e 's/MemTotal://' -e 's/ kB//'`.to_i / 1024
+			if mem >= 2048
+				mem = 2048
+			end
+			vb.customize ["modifyvm", :id, "--memory", mem]
+		end
+	end
+   
+    ### Java production server, contains maven3, oracle jdk 8, git ###
     config.vm.define :java_dev do |java_dev|
         java_dev.vm.box = "tutum/node"
         java_dev.vm.hostname = "java-buildserver" 
